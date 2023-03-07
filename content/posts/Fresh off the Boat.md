@@ -13,4 +13,4 @@ After much slacking off, I have finally moved the site over to a new theme and a
 
 I do plan to finish the NATAS series in the coming month's so that we can move on to newer challenges like **hackmyvm** or even blogs about Bug Bounty Programs that I am doing.
 
-Until Next time...git 
+Until Next time...
