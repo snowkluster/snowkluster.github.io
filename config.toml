@@ -31,6 +31,7 @@ menu = [
 
         # Example of a list without a subheading or limit.
         {Name = "Projects", URL = "/projects/"},
+        {Name = "SnowKluster", URL = "home.md"}
     ]
 
 
@@ -93,6 +94,8 @@ menu = [
     table_border_color_dark = "#515151" # default is #515151
     table_stripe_color_dark = "#202020" # default is #202020
 
+[params.meta]
+    favicon = true
 
 [taxonomies]
     series = 'series'
