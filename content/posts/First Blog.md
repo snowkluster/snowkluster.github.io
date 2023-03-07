@@ -2,6 +2,7 @@
 title: "First Blog"
 date: 2022-11-16T01:31:50+05:30
 tags: ['update']
+series: "Personal"
 ---
 
 # Fresh Start
