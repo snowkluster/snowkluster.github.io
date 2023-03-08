@@ -79,7 +79,71 @@ This level is pretty similar to level nine but with more security features. Now 
 Therefore the key is ``1KFqoJXi6hRaPluAmk8ESDW4fSysRoIg``
 
 
-![](/Blog3/natas11-ans.png)
+![](/Blog3/natas10-ans.png)
 
 ## LEVEL 11
 
+From this level onwards, the challenges focus on more complex topics and exploits. For this challenge, we are given a text box in accepts hex colour values and changes the background colour accordingly. 
+
+![](/Blog3/natas11-home.png)
+
+Looking at the source code, we see an array declared at the start,
+
+```$defaultdata = array( "showpassword"=>"no", "bgcolor"=>"#ffffff");```
+
+Followed by three functions.
+
+![](/Blog3/natas11-src.png)
+
+Analysing the source code, we see that the ``loaddata`` function is passed the ``defaultdata`` array, the function sets a global cookie and passes the value of ``defaultdata`` to ``mydata``. It then checks the cookie to see if it's an array and that this array contains a key value called data. If data exists then the key value of data from the cookie is decoded from base64 passed to the XOR function and then finally decoded from JSON as the XOR function would return PHP code and stored in ``tempdata``. Check are then made to see if ``tempdata`` is an array and that it contains the keys ``showpassword`` and ``bgcolor`` and that ``bgcolor`` is not greater than 6 characters.
+
+
+If the conditions are met, the value of ``mydata`` is changed and returned. The save data function sets the cookie via,
+
+```setcookie("data", base64_encode(xor_encrypt(json_encode($d))));```
+
+
+This leaves us with the final function to analyse the ``xor_encrypt`` function. It takes the array passed to it and XOR each element of the array with the elements of the key is the following way:
+
+![](/Blog3/natas11-xor.png)
+
+So to get the password to the next level, we need to set the array key value of **showpassword** to __yes__. We know that the value for the array is read from the cookie and that the cookie is XOR encrypted. But XOR is a flawed encryption technique as, if one know any two of the values used in the function, they are able to derive the third value.
+
+**Plaintext ⊕ key = encrypted_text**
+
+**encrypted_text ⊕ plaintext = key**
+
+**encrypted_text ⊕ key = plaintext**
+
+Where  ⊕ denotes the [exclusive disjunction](https://en.wikipedia.org/wiki/Exclusive_disjunction) (XOR) operation.
+
+We can see the current cookie by typing ``document.cookie`` into the console, this gives the value of 
+**"data=MGw7JCQ5OC04PT8jOSpqdmkgJ25nbCorKCEkIzlscm5oKC4qLSgubjY%3D"**.  
+
+Since all cookies are URL encoded by the web server, we first need to decode it from the URL format. We can further see from the ``loaddata`` function  that this value need to be decoded from Base64 before passing it to the XOR function. 
+
+![](/Blog3/natas11-url-b64.png)
+
+Now,  to find the key used in the XOR function which is censored in the given source code, 
+
+![](/Blog3/natas11-censor.png)
+
+we first need to take the decode output and pass that as an input to the XOR function.  For the key, we need to pass the value of the array that's stored in the cookie, as that's the Plain text.
+
+```$defaultdata = array( "showpassword"=>"no", "bgcolor"=>"#ffffff");```
+
+But these values are stored as PHP code, to get the real Plain text value we need to encode it to JSON like in the save data function. Doing this will lend us the real key used in the XOR cipher as, 
+
+**encrypted_text ⊕ plaintext = key**
+
+The key Being **KNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLK**, but this isn't the real key, as we can see the value __KNHL__ is being repeated over and over again this happens when the keys used in XOR is shorter than the Plain text. So the real key is **KNHL**
+
+Now, using this key we can forge a new cookie where the value ``showpassword`` is set to true  and then all we need to do to get the flag is inject this malformed cookie and refresh the page. 
+Given us the password to next level ``YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG``
+
+![](/Blog3/natas11-ans.png)
+
+
+## Finishing OFF
+
+I will be posting the solutions to natas13 through natas18, hopefully soon...
