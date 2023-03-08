@@ -74,7 +74,11 @@ We know from the **Natas** start page that ``All passwords are also stored in /e
 ## LEVEL 10
 
 This level is pretty similar to level nine but with more security features. Now before our query gets passed to the ``passthru`` function it is checked against regex to see if there are illegal characters in use ``if(preg_match('/[;|&]/',$key))``. To circumvent this, we can use skip the use of ``; cat`` and directly exploit the function, as it still use grep. We can pass a query like 
-``.* /etc/natas_webpass/natas11 #`` telling grep to get the content of the file natas11 located at given directory and ignore the rest of output (this will shorten our result as the output of grep -i dictionary is droped by bash). 
+``.* /etc/natas_webpass/natas11 #`` telling grep to get the content of the file natas11 located at given directory and ignore the rest of output (this will shorten our result as the output of grep -i dictionary is droped by bash).
+
+Therefore the key is ``1KFqoJXi6hRaPluAmk8ESDW4fSysRoIg``
+
+
 ![](/Blog3/natas11-ans.png)
 
 ## LEVEL 11
