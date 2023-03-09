@@ -147,3 +147,9 @@ Given us the password to next level ``YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG``
 ## Finishing OFF
 
 I will be posting the solutions to natas13 through natas18, hopefully soon...
+
+## LEVEL 12
+
+key is
+
+"lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9 lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9"
