@@ -144,12 +144,31 @@ Given us the password to next level ``YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG``
 ![](/Blog3/natas11-ans.png)
 
 
+## LEVEL 12
+
+This level is the start to us learning about file upload vulnerabilities, We start off at the home page where we can upload a JPEG with the max size of 1 KB, 
+
+![](/Blog3/natas12-home.png)
+
+but we can upload any file to it as there are no checks present on the website. However, uploading a PHP file to the site, gives it a random name, changes its extension to **".jpg"** and places it in the __/upload/__  directory.
+
+![](/Blog3/natas12-up.png)
+
+![](/Blog3/natas12-src.png)
+
+We can see from the source code that, when a file is uploaded via POST request with the name “filename”, and the file is smaller than 1000B. A random string of length 10 with small-case alphanumeric characters as substitute for the original filename is created. Finally, the file is uploaded to "upload/[10 character random alphanumeric filename].jpg" 
+
+However, if after selecting our file we intercept the upload request using Burp, we see that we are able to change the file-type of the file. Specially the form-data with the name "__filename__" , changing the auto added **.jpg** extension to **.php** we can run our code on the server.
+
+![](/Blog3/natas12-burp.png)
+
+With the following PHP code, we should be able to cat out the password to the next level 
+
+![](/Blog3/natas12-mal.png)
+
+To do so, we upload the crafted PHP file but intercept the request to change the auto added **.jpg** to **.php** so that our code can execute. Doing this gives us the upload endpoint where our PHP file resides, visiting the endpoint triggers our code to execute and gives use the password to the next level: ``lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9``
+
+
 ## Finishing OFF
 
 I will be posting the solutions to natas13 through natas18, hopefully soon...
-
-## LEVEL 12
-
-key is
-
-"lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9 lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9"
