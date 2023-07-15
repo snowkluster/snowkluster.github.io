@@ -11,4 +11,4 @@ git commit -S -m "$message"
 
 git push -u origin master
 
-echo "${Green}All Changes Pushed"
+echo -e  "${Green}All Changes Pushed"
