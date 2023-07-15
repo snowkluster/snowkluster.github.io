@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-Green='\033[0;32m'
+Green="\e[32m"
 
 git add .
 
