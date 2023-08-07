@@ -1,6 +1,6 @@
 git add .
 
-$message = Read-Host "Enter commit message: "
+$message = Read-Host "Enter commit message"
 
 git commit -S -m "$message" 
 
