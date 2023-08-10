@@ -1,0 +1,10 @@
+header nav a {
+    text-decoration: none;
+}
+body a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: whitesmoke;
+}
