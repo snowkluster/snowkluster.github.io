@@ -1,0 +1,5 @@
+Contact: mailto:rohankaushik1@outlook.com
+Expires: 2024-12-31T07:29:00.000Z
+Encryption: https://snowkluster.github.io/pgp.key
+Preferred-Languages: en
+Canonical: https://snowkluster.github.io/.well-known/security.txt
