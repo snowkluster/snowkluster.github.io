@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
+    <link rel="stylesheet" href="https://newcss.net/theme/night.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <title>Snow-Kluster's Blog</title>
+</head>
+
+<body>
+    <header>
+        <h1 id="more-to-learn">More To Learn</h1>
+        <br>
+        <nav>
+            <a href="/">Home</a> /
+            <a href="/public/">Index</a> /
+            <a href="https://tryhackme.com/p/kronosnull">TryHackMe</a> /
+            <a href="https://app.hackthebox.com/profile/1030624">HacktheBox</a> /
+            <a href="https://github.com/snow-kluster">GitHub</a> /
+            <a href="https://www.linkedin.com/in/rohan-kaushik-a92907232/">Linkedin</a> /
+            <a href="https://infosec.exchange/@kluster">Infosec Exchange</a>
+        </nav>
+    </header>
+    <br>
+    <main>
+        <p>Moving on to the next batch of war rooms, the challenges get a bit more technical and a bit more fun. So
+            let&#39;s continue, shall we…</p>
+    
+        <h2 id="level-06">LEVEL 06</h2>
+        <p><strong>Natas6</strong> start us off by asking for a secret password and if we enter the wrong password it gives
+            us an error message.</p>
+        <p><img src="/static/Blog3/natas-6-home.png" alt=""></p>
+        <p>if we view the source we can see the verification function that is used here, and we can see that it in the
+            <code>PHP</code> code it includes a file called <code>/includes/secret.inc</code> if we visit the page in our
+            browser we see an empty page but viewing the source reveals the password need to pass verification
+            <code>FOEIUWGHFEEUHOFUOIU</code>. When we enter the secret in the homepage, and we get the password required to
+            access the next room.</p>
+        <p>The password is <code>jmxSiH3SP6Sonf8dv66ng8v1cIEdjXWr</code>.</p>
+    
+        <h2 id="level-07">LEVEL 07</h2>
+        <p>When we first connect to the page, we see two links that leads to</p>
+        <p><img src="/static/Blog3/natas7-home.png" alt=""></p>
+        <p>and</p>
+        <p><img src="/static/Blog3/natas7-about.png" alt=""></p>
+        <p>When we view the page source for both these pages, we see a comment left behind, giving us a hint.</p>
+        <p><code>hint: password for webuser natas8 is in /etc/natas_webpass/natas8</code></p>
+        <p>We also see that when we click on any of the hyperlinks, the URL of the page changes to </p>
+        <p><code>index.php?page=home</code>.</p>
+        <p>This could mean that these pages are loaded in using an include function in <code>PHP</code> and that could lead
+            us to a <strong>local file inclusion vulnerability</strong></p>
+        <p>If we enter the file path that the clue gave us, it leads to a new page giving us the next password.</p>
+        <p><img src="/static/Blog3/natas7-pass.png" alt=""></p>
+    
+        <h2 id="level-08">LEVEL 08</h2>
+        <p>Level 8 starts off similar to level 6 asking us for a password. Viewing the source shows us the verification
+            method used.</p>
+        <p><img src="/static/Blog3/natas8-encode.png" alt=""></p>
+        <p>We can see that it takes our password, does a few operations on it and then compares it to the
+            <code>$encodedSecret = &quot;3d3d516343746d4d6d6c315669563362&quot;</code>.</p>
+        <p>So to crack the password if simply perform the operations in reverse order on the <code>$encodedSecret</code>.
+        </p>
+        <p>Firstly we convert the <code>$encodedSecret&quot;</code> from <code>bin2hex</code> then reverse the string that
+            we get and finally decode the <code>base64</code> output leaving us with the</p>
+        <p>secret <code>oubWYf2kBq</code> and the password to next level <code>Sda6t0vkOPkM8YeOZkAGVhFoaplvlJFd</code>.</p>
+    
+        <h2 id="level-09">LEVEL 09</h2>
+        <p>This room is a great example to learn about command injections. The homepage contains a search box which returns
+            all the string that match the user entered string.</p>
+        <p><img src="/static/Blog3/natas9-home.png" alt=""></p>
+        <p>Viewing the source shows us that the search function essentially runs the Linux command
+            <code>passthru(&quot;grep -i $key dictionary.txt&quot;);</code> on the given user string using the
+            <code>PHP</code> command <code>passthru</code>, this is the key to cracking this room. As the
+            <code>passthru</code> function does no check on the user input, we can use it to run our own commands. To run
+            multiple commands on Linux simultaneously, we use the <code>;</code> symbol telling the shell that the command
+            following the <code>;</code> symbol need to execute regardless of the success of the first command. By doing
+            this, we can view all the files and folders present on the machine.</p>
+        <p><img src="/static/Blog3/natas9-all-files.png" alt=""></p>
+        <p>We know from the <strong>Natas</strong> start page that
+            <code>All passwords are also stored in /etc/natas_webpass/</code> so we can go to file location
+            <code>/etc/natas_webpass/natas10</code> to get the password to the next room. We can use the payload
+            <code>; cat /etc/natas_webpass/natas10</code> to view the contents of the file <strong>natas10</strong>. This
+            gets us the password for the next room <code>D44EcsFkLxPIkAAKLosx8z3hxX1Z4MCE</code>. To make the output of our
+            payload cleaner we can use the <code>#</code> symbol that is used to trim string and comment out the rest of
+            command output (which in our case the output of the command <code>grep -i $key dictionary.txt</code>)</p>
+        <p><img src="/static/Blog3/natas9-fin-pay.png" alt=""></p>
+    
+        <h2 id="level-10">LEVEL 10</h2>
+        <p>This level is pretty similar to level nine but with more security features. Now before our query gets passed to
+            the <code>passthru</code> function it is checked against regex to see if there are illegal characters in use
+            <code>if(preg_match(&#39;/[;|&amp;]/&#39;,$key))</code>. To circumvent this, we can use skip the use of
+            <code>; cat</code> and directly exploit the function, as it still use grep. We can pass a query like
+            <code>.* /etc/natas_webpass/natas11 #</code> telling grep to get the content of the file natas11 located at
+            given directory and ignore the rest of output (this will shorten our result as the output of grep -i dictionary
+            is droped by bash).
+        </p>
+        <p>Therefore the key is <code>1KFqoJXi6hRaPluAmk8ESDW4fSysRoIg</code></p>
+        <p><img src="/static/Blog3/natas10-ans.png" alt=""></p>
+    
+        <h2 id="level-11">LEVEL 11</h2>
+        <p>From this level onwards, the challenges focus on more complex topics and exploits. For this challenge, we are
+            given a text box in accepts hex colour values and changes the background colour accordingly. </p>
+        <p><img src="/static/Blog3/natas11-home.png" alt=""></p>
+        <p>Looking at the source code, we see an array declared at the start,</p>
+        <p><code>$defaultdata = array( &quot;showpassword&quot;=&gt;&quot;no&quot;, &quot;bgcolor&quot;=&gt;&quot;#ffffff&quot;);</code>
+        </p>
+        <p>Followed by three functions.</p>
+        <p><img src="/static/Blog3/natas11-src.png" alt=""></p>
+        <p>Analysing the source code, we see that the <code>loaddata</code> function is passed the <code>defaultdata</code>
+            array, the function sets a global cookie and passes the value of <code>defaultdata</code> to
+            <code>mydata</code>. It then checks the cookie to see if it&#39;s an array and that this array contains a key
+            value called data. If data exists then the key value of data from the cookie is decoded from base64 passed to
+            the XOR function and then finally decoded from JSON as the XOR function would return PHP code and stored in
+            <code>tempdata</code>. Check are then made to see if <code>tempdata</code> is an array and that it contains the
+            keys <code>showpassword</code> and <code>bgcolor</code> and that <code>bgcolor</code> is not greater than 6
+            characters.</p>
+        <p>If the conditions are met, the value of <code>mydata</code> is changed and returned. The save data function sets
+            the cookie via,</p>
+        <p><code>setcookie(&quot;data&quot;, base64_encode(xor_encrypt(json_encode($d))));</code></p>
+        <p>This leaves us with the final function to analyse the <code>xor_encrypt</code> function. It takes the array
+            passed to it and XOR each element of the array with the elements of the key is the following way:</p>
+        <p><img src="/static/Blog3/natas11-xor.png" alt=""></p>
+        <p>So to get the password to the next level, we need to set the array key value of <strong>showpassword</strong> to
+            <strong>yes</strong>. We know that the value for the array is read from the cookie and that the cookie is XOR
+            encrypted. But XOR is a flawed encryption technique as, if one know any two of the values used in the function,
+            they are able to derive the third value.</p>
+        <p><strong>Plaintext ⊕ key = encrypted_text</strong></p>
+        <p><strong>encrypted_text ⊕ plaintext = key</strong></p>
+        <p><strong>encrypted_text ⊕ key = plaintext</strong></p>
+        <p>Where ⊕ denotes the <a href="https://en.wikipedia.org/wiki/Exclusive_disjunction">exclusive disjunction</a> (XOR)
+            operation.</p>
+        <p>We can see the current cookie by typing <code>document.cookie</code> into the console, this gives the value of
+            <strong>&quot;data=MGw7JCQ5OC04PT8jOSpqdmkgJ25nbCorKCEkIzlscm5oKC4qLSgubjY%3D&quot;</strong>.
+        </p>
+        <p>Since all cookies are URL encoded by the web server, we first need to decode it from the URL format. We can
+            further see from the <code>loaddata</code> function that this value need to be decoded from Base64 before
+            passing it to the XOR function. </p>
+        <p><img src="/static/Blog3/natas11-url-b64.png" alt=""></p>
+        <p>Now, to find the key used in the XOR function which is censored in the given source code, </p>
+        <p><img src="/static/Blog3/natas11-censor.png" alt=""></p>
+        <p>we first need to take the decode output and pass that as an input to the XOR function. For the key, we need to
+            pass the value of the array that&#39;s stored in the cookie, as that&#39;s the Plain text.</p>
+        <p><code>$defaultdata = array( &quot;showpassword&quot;=&gt;&quot;no&quot;, &quot;bgcolor&quot;=&gt;&quot;#ffffff&quot;);</code>
+        </p>
+        <p>But these values are stored as PHP code, to get the real Plain text value we need to encode it to JSON like in
+            the save data function. Doing this will lend us the real key used in the XOR cipher as, </p>
+        <p><strong>encrypted_text ⊕ plaintext = key</strong></p>
+        <p>The key Being <strong>KNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLK</strong>, but this isn&#39;t the real key, as we
+            can see the value <strong>KNHL</strong> is being repeated over and over again this happens when the keys used in
+            XOR is shorter than the Plain text. So the real key is <strong>KNHL</strong></p>
+        <p>Now, using this key we can forge a new cookie where the value <code>showpassword</code> is set to true and then
+            all we need to do to get the flag is inject this malformed cookie and refresh the page.
+            Given us the password to next level <code>YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG</code></p>
+        <p><img src="/static/Blog3/natas11-ans.png" alt=""></p>
+    
+        <h2 id="level-12">LEVEL 12</h2>
+        <p>This level is the start to us learning about file upload vulnerabilities, We start off at the home page where we
+            can upload a JPEG with the max size of 1 KB, </p>
+        <p><img src="/static/Blog3/natas12-home.png" alt=""></p>
+        <p>but we can upload any file to it as there are no checks present on the website. However, uploading a PHP file to
+            the site, gives it a random name, changes its extension to <strong>&quot;.jpg&quot;</strong> and places it in
+            the <strong>/upload/</strong> directory.</p>
+        <p><img src="/static/Blog3/natas12-up.png" alt=""></p>
+        <p><img src="/static/Blog3/natas12-src.png" alt=""></p>
+        <p>We can see from the source code that, when a file is uploaded via POST request with the name “filename”, and the
+            file is smaller than 1000B. A random string of length 10 with small-case alphanumeric characters as substitute
+            for the original filename is created. Finally, the file is uploaded to &quot;upload/[10 character random
+            alphanumeric filename].jpg&quot; </p>
+        <p>However, if after selecting our file we intercept the upload request using Burp, we see that we are able to
+            change the file-type of the file. Specially the form-data with the name &quot;<strong>filename</strong>&quot; ,
+            changing the auto added <strong>.jpg</strong> extension to <strong>.php</strong> we can run our code on the
+            server.</p>
+        <p><img src="/static/Blog3/natas12-burp.png" alt=""></p>
+        <p>With the following PHP code, we should be able to cat out the password to the next level </p>
+        <p><img src="/static/Blog3/natas12-mal.png" alt=""></p>
+        <p>To do so, we upload the crafted PHP file but intercept the request to change the auto added <strong>.jpg</strong>
+            to <strong>.php</strong> so that our code can execute. Doing this gives us the upload endpoint where our PHP
+            file resides, visiting the endpoint triggers our code to execute and gives use the password to the next level:
+            <code>lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9</code></p>
+        <h2 id="finishing-off">Finishing OFF</h2>
+        <p>I will be posting the solutions to natas13 through natas18, hopefully soon...</p>
+    </main>
+</body>
+
+</html>

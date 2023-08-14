@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
+    <link rel="stylesheet" href="https://newcss.net/theme/night.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <title>Snow-Kluster's Blog</title>
+</head>
+
+<body>
+    <header>
+        <h1 id="natas-as-a-start">Natas as a Start</h1>
+        <br>
+        <nav>
+            <a href="/">Home</a> /
+            <a href="/public/">Index</a> /
+            <a href="https://tryhackme.com/p/kronosnull">TryHackMe</a> /
+            <a href="https://app.hackthebox.com/profile/1030624">HacktheBox</a> /
+            <a href="https://github.com/snow-kluster">GitHub</a> /
+            <a href="https://www.linkedin.com/in/rohan-kaushik-a92907232/">Linkedin</a> /
+            <a href="https://infosec.exchange/@kluster">Infosec Exchange</a>
+        </nav>
+    </header>
+    <br>
+    <main>
+        <p>Over the next few weeks, I will try and post a complete walkthrough guide for the <strong>Natas</strong> war game
+            that you can play over at <a href="https://overthewire.org/wargames/natas/">OverTheWire</a>.
+            The <strong>Natas</strong> is a war game based around web exploitation and pentesting, to start playing
+            <strong>Natas</strong> we can simply visit the url and enter the password given to us.
+            (Note: As we complete a room in these Wargames we are given the password to access the next room and move
+            forward in a journey)
+        </p>
+        <p><img src="/static/static/Blog2/Natas0-start.webp" alt=""></p>
+        <p>Anyway, let's start with <strong><em>Natas</em></strong></p>
+    
+        <h2 id="level-00">LEVEL 00</h2>
+        <p>We are given the <a href="http://natas0.natas.labs.overthewire.org/">URL</a> and the login username and password
+            for the page (<em>natas0</em>). The objective of the Room is to find the password for the next room, add the
+            landing page also tells us about it</p>
+        <p><img src="/static/Blog2/Natas0-home-info.webp" alt=""></p>
+        <p>We can see there is nothing else present on the page, so let's view the page source instead, and there amongst
+            the <code>HTML</code> we can the password for the next</p>
+        <p><img src="/static/Blog2/Natas0-password.webp" alt=""></p>
+        <p>Moving right along...</p>
+    
+        <h2 id="level-01">LEVEL 01</h2>
+        <p>Moving on to the next room, we enter the username &quot;<em><em>natas1</em></em>&quot; and the password we got
+            from the last room. We are greeted with this bit of information </p>
+        <p><img src="/static/Blog2/natas1-home-info.webp" alt=""> </p>
+        <p>and trying to right-click lead to JavaScript alert telling us</p>
+        <p><img src="/static/Blog2/natas1-rightclick-result.webp" alt=""></p>
+        <p>As the page still seem mostly empty, let's try looking at the source by pressing <kbd>Ctrl</kbd> + <kbd>u</kbd>.
+            This show us the password for the next room.</p>
+        <p><img src="/static/Blog2/natas1-password.webp" alt=""></p>
+    
+        <h2 id="level-02">LEVEL 02</h2>
+        <p>We know the routine now and immediately start looking at the page source. We can see amongst the
+            <code>HTML</code> an <code>img</code> tag which is referencing an image named &quot;<em>pixel.png</em>&quot;.
+        </p>
+        <p><img src="/static/blog2/natas2-img-html.webp" alt=""></p>
+        <p>If we visit this image, we can see a blank page, but the interesting thing is that we are now in a subdirectory
+            called <code>http://natas2.natas.labs.overthewire.org/files/pixel.png</code>
+            if we go back a directory, we find our self at an index of all the files used in the page and with it a
+            <strong>Directory listing vulnerability</strong>
+        </p>
+        <p><img src="/static/Blog2/natas2-index.webp" alt=""> </p>
+        <p>we can see a file called users.txt that has the contents:
+            <code># username:password</code>
+        </p>
+        <p><code>alice:BYNdCesZqW</code></p>
+        <p><code>bob:jw2ueICLvT</code></p>
+        <p><code>charlie:G5vCxkVV3m</code></p>
+        <p><code>natas3:G6ctbMJ5Nb4cbFwhpMPSvxGHhQ7I6W8Q</code></p>
+        <p><code>eve:zo4mJWyNj2</code></p>
+        <p><code>mallory:9urtcpzBmH</code></p>
+        <p>and we find our next password.</p>
+    
+        <h2 id="level-03">LEVEL 03</h2>
+        <p>If we view the page source, we can see that it says
+            <code>&lt;!-- No more information leaks!! Not even Google will find it this time... --&gt;</code>
+        </p>
+        <p>that means we google's crawlers are not able to find it.
+            We can look over at robots.txt file to find <strong>/s3cr3t/</strong> that all crawlers are told to ignore,
+            going to <strong>/s3cr3t/</strong> show another index page with a users.txt file and hence giving us our
+            password.</p>
+        <p><strong><em>natas4:tKOcJIbzM4lTs8hbCmzn5Zr4434fGZQm</em></strong></p>
+    
+        <h2 id="level-04">LEVEL 04</h2>
+        <p>The landing page tells us that we are visiting from <code>'' ''</code> and only users coming from
+            <strong>&quot;<a
+                    href="http://natas5.natas.labs.overthewire.org/">http://natas5.natas.labs.overthewire.org/</a>&quot;</strong>
+            are authorized,
+            and we don't have access to <strong>natas5</strong>. If we refresh the page, it now tells use that we are coming
+            from <code>http://natas4.natas.labs.overthewire.org/</code>.
+            If we intercept the page request using burp suite and send it to the repeater, we can see the
+            <code>referer</code> header says that we are coming from the <strong>natas4</strong> website. As we have
+            intercepted the request using burp suite,
+            we can now change the <code>referer</code> header to <strong>&quot;<a
+                    href="http://natas5.natas.labs.overthewire.org/">http://natas5.natas.labs.overthewire.org/</a>&quot;</strong>
+        </p>
+        <p><img src="/static/Blog2/natas4-referer.webp" alt=""></p>
+        <p>the response gives us the password</p>
+        <p><img src="/static/Blog2/natas4-ans.webp" alt=""></p>
+    
+        <h2 id="level-05">LEVEL 05</h2>
+        <p>The landing page tells us that <code>Access disallowed. You are not logged in</code> and viewing the page source
+            also doesn't reveal anything. If we view the request in <code>Burp</code>
+            we can see that the there is a cookie in play called <code>Cookie: loggedin=0</code> that has its value set to 0
+            (or <code>FALSE</code>). If we change the value of this cookie to 1 (or <code>TRUE</code>)</p>
+        <p>(doing a <code>Cookie Based Authentication Vulnerabilities</code>)
+            we can see in the response tab the password for the next room.</p>
+        <p><strong><code>fOIvE0MDtPTgRhqmmvvAOt2EfXR6uQgR</code></strong></p>
+        <h3 id="more-to-come">More to come</h3>
+        <p>I will be posting the solutions to natas6 through natas12, hopefully by next week, gives me a good reason to
+            visit these war games again</p>
+    </main>
+</body>
+
+</html>
